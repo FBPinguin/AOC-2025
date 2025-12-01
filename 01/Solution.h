@@ -5,8 +5,15 @@
 #ifndef SOLUTION_H
 #define SOLUTION_H
 #include <fstream>
+#include <vector>
+
+struct rotation {
+    char direction;
+    long long number;
+};
 
 class Solution{
+    std::vector<rotation> rotations;
 
 public:
     void init(std::ifstream& input);

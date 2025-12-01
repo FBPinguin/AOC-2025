@@ -10,5 +10,11 @@
 
 void Solution::init(std::ifstream &input) {
   for (std::string line{}; getline(input, line);) {
+    std::stringstream ss{line};
+    char a;
+    long long b;
+    ss >> a;
+    ss >> b;
+    rotations.push_back({a,b});
   }
 }
