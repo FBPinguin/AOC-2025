@@ -52,9 +52,9 @@ public class Day04 {
 
     private long solveSolution1() {
         long acc = 0;
-        for (int i = 0; i < this.mapHeight; i++) {
-            for (int j = 0; j < this.mapWidth; j++) {
-                if (numOfAdjecent(i, j) < 4 && map.get(i).charAt(j) == '@') {
+        for (int row = 0; row < this.mapHeight; row++) {
+            for (int col = 0; col < this.mapWidth; col++) {
+                if (numOfAdjecent(row, col) < 4 && map.get(row).charAt(col) == '@') {
                     acc++;
                 }
             }
@@ -65,11 +65,11 @@ public class Day04 {
 
     private int numOfAdjecent(int row, int col) {
         int acc = 0;
-        for (int i = -1; i < 2; i++) {
-            for (int j = -1; j < 2; j++) {
-                int newRow = row + i;
-                int newCol = col + j;
-                if (i == j && i == 0) {
+        for (int offsetWidth = -1; offsetWidth < 2; offsetWidth++) {
+            for (int offsetHeight = -1; offsetHeight < 2; offsetHeight++) {
+                int newRow = row + offsetWidth;
+                int newCol = col + offsetHeight;
+                if (offsetWidth == offsetHeight && offsetWidth == 0) {
                     continue;
                 }
                 if (isOutofBounds(newRow, newCol)) {
@@ -86,50 +86,47 @@ public class Day04 {
     boolean[][] isGoneMap;
 
 
-    boolean isOutofBounds(int i, int j) {
-        if (i < 0 || i >= mapHeight){
+    boolean isOutofBounds(int row, int col) {
+        if (row < 0 || row >= mapHeight){
             return true;
         }
-        if (j < 0 || j >= mapWidth) {
+        if (col < 0 || col >= mapWidth) {
             return true;
         }
         return false;
     }
 
-    long checkPos(int i, int j) {
-        long acc = 0;
-        if (isOutofBounds(i, j)) {
-            return 0;
+    void checkPos(int row, int col) {
+        if (isOutofBounds(row, col)) {
+            return;
         }
-        if (map.get(i).charAt(j) != '@' || isGoneMap[i][j]) {
-            return 0;
+        if (map.get(row).charAt(col) != '@' || isGoneMap[row][col]) {
+            return;
         }
 
-        if (numOfAdjecent(i, j) < 4 && map.get(i).charAt(j) == '@') {
-            acc++;
-            isGoneMap[i][j] = true;
-            for (int i2 = 0; i2 < this.mapHeight; i2++) {
-                for (int j2 = 0; j2 < this.mapWidth; j2++) {
-                    if (i2 == j2 && i2 == 0) {
+        if (numOfAdjecent(row, col) < 4 && map.get(row).charAt(col) == '@') {
+            isGoneMap[row][col] = true;
+            for (int offsetHeight = -1; offsetHeight < 2; offsetHeight++) {
+                for (int offsetWidth = -1; offsetWidth < 2; offsetWidth++) {
+                    if (offsetHeight == offsetWidth && offsetHeight == 0) {
                         continue;
                     }
-                    checkPos(i + i2, j + j2);
+                    checkPos(row + offsetHeight, col + offsetWidth);
                 }
             }
         }
-        return acc;
     }
 
     private long solveSolution2() {
         long acc = 0;
-        for (int i = 0; i < this.mapHeight; i++) {
-            for (int j = 0; j < this.mapWidth; j++) {
-                checkPos(i, j);
+        for (int row = 0; row < this.mapHeight; row++) {
+            for (int col = 0; col < this.mapWidth; col++) {
+                checkPos(row, col);
             }
         }
-        for (int i = 0; i < this.mapHeight; i++) {
-            for (int j = 0; j < this.mapWidth; j++) {
-               if (isGoneMap[i][j]) {
+        for (int row = 0; row < this.mapHeight; row++) {
+            for (int col = 0; col < this.mapWidth; col++) {
+               if (isGoneMap[row][col]) {
                    acc++;
                }
             }
