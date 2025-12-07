@@ -90,17 +90,6 @@ public class Day07 {
         return acc;
     }
 
-    private Collection<Move> getSplitMoves(Move newMove) {
-        List<Move> splitMoves = new ArrayList<>();
-        Move moveRight = new Move(new Graph.Position(newMove.pos.row(), newMove.pos.col() - 1),
-                                  newMove.direction());
-        Move moveLeft = new Move(new Graph.Position(newMove.pos.row(), newMove.pos.col() + 1),
-                                 newMove.direction());
-        splitMoves.add(moveRight);
-        splitMoves.add(moveLeft);
-        splitMoves = splitMoves.stream().filter((i) -> isValid(i.pos())).toList();
-        return splitMoves;
-    }
 
     private String getChar(Graph.Position newPos) {
         return map.get(newPos.row()).get(newPos.col());
