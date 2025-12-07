@@ -63,35 +63,29 @@ public class Day07 {
 
     }
 
+    Set<Graph.Position> turnedOnMap = new HashSet<>();
+
     private long getAcitvatedTeleporters() {
-        long acc = 0;
-        Set<Graph.Position> turnedOnMap = new HashSet<>();
-        List<Move> moves = new ArrayList<>();
-        moves.add(new Move(new Graph.Position(startingSpot.row(), startingSpot.col()),
-                           Graph.Direction.DOWN));
+        return getTotalTeleporters(new Graph.Position(startingSpot.row(), startingSpot.col()));
+    }
 
-        while (!moves.isEmpty()) {
-            Move move = moves.remove(moves.size() - 1);
-            Move newMove = move.getNewPos();
-            Graph.Position newPos = newMove.pos;
-
-            if (!isValid(newPos)) {
-                continue;
-            }
-
-            switch (getChar(newPos)) {
-                case "." -> moves.add(newMove);
-                case "^" -> {
-                    if (!turnedOnMap.contains(newPos)) {
-
-                        moves.addAll(getSplitMoves(newMove));
-                        turnedOnMap.add(newPos);
-                        acc++;
-                    }
-                }
-            }
-
+    private long getTotalTeleporters(Graph.Position pos) {
+        if (turnedOnMap.contains(pos)) {
+            return 0;
         }
+
+        Graph.Position leftBelow = getTeleporterBelow(new Graph.Position(pos.row(), pos.col() - 1));
+        Graph.Position rightBelow =
+                getTeleporterBelow(new Graph.Position(pos.row(), pos.col() + 1));
+        long acc = 1;
+        if (leftBelow != null) {
+            acc += getTotalTeleporters(leftBelow);
+        }
+        if (rightBelow != null) {
+            acc += getTotalTeleporters(rightBelow);
+        }
+
+        turnedOnMap.add(pos);
 
         return acc;
     }
@@ -131,18 +125,23 @@ public class Day07 {
     }
 
 
-
     Map<Graph.Position, Long> timeLineMap = new HashMap<>();
+
     private long getTotalTimeLines(Graph.Position pos) {
         if (timeLineMap.containsKey(pos)) {
             return timeLineMap.get(pos);
         }
 
-        Graph.Position leftBelow = getTeleporterBelow(new Graph.Position(pos.row(), pos.col()-1));
-        Graph.Position rightBelow = getTeleporterBelow(new Graph.Position(pos.row(), pos.col()+1));
+        Graph.Position leftBelow = getTeleporterBelow(new Graph.Position(pos.row(), pos.col() - 1));
+        Graph.Position rightBelow =
+                getTeleporterBelow(new Graph.Position(pos.row(), pos.col() + 1));
         long acc = 1;
-        if (leftBelow != null) acc += getTotalTimeLines(leftBelow);
-        if (rightBelow != null) acc += getTotalTimeLines(rightBelow);
+        if (leftBelow != null) {
+            acc += getTotalTimeLines(leftBelow);
+        }
+        if (rightBelow != null) {
+            acc += getTotalTimeLines(rightBelow);
+        }
 
         timeLineMap.put(pos, acc);
 
@@ -150,7 +149,7 @@ public class Day07 {
     }
 
 
-    public Graph.Position getTeleporterBelow(Graph.Position pos){
+    public Graph.Position getTeleporterBelow(Graph.Position pos) {
         int row = pos.row();
         int col = pos.col();
         Graph.Position returnPos = null;
