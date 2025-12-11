@@ -9,7 +9,7 @@ public class Intervals {
         this.intervals = new ArrayList<>();
     }
 
-    public Intervals(List<Interval> intervals){
+    public Intervals(List<Interval> intervals) {
         this.intervals = intervals;
     }
 
@@ -39,7 +39,6 @@ public class Intervals {
     }
 
 
-
     public void addInterval(Interval interval) {
         var overlappingIntervals = popOverlappingIntervals(interval);
         overlappingIntervals.add(interval);
@@ -51,7 +50,8 @@ public class Intervals {
     private Interval mergeIntervals(List<Interval> overlappingIntervals) {
         var mergedInterval = overlappingIntervals.remove(0);
         while (!overlappingIntervals.isEmpty()) {
-            Interval overlappingInterval = popOverlappingInterval(overlappingIntervals, mergedInterval);
+            Interval overlappingInterval =
+                    popOverlappingInterval(overlappingIntervals, mergedInterval);
             overlappingIntervals.remove(overlappingInterval);
             mergedInterval = mergedInterval.merge(overlappingInterval);
         }
@@ -67,7 +67,11 @@ public class Intervals {
         return mappedList;
     }
 
-    public Interval contains(Long i) {
+    public boolean contains(Long i) {
+        return getInterval(i) != null;
+    }
+
+    public Interval getInterval(Long i) {
         for (Interval interval : intervals) {
             if (interval.contains(i)) {
                 return interval;
@@ -75,7 +79,6 @@ public class Intervals {
         }
         return null;
     }
-
 
 
     /**
@@ -87,12 +90,8 @@ public class Intervals {
             return start <= num && num <= end;
         }
 
-        public enum Overlap{
-            START,
-            END,
-            INSIDE,
-            OUTSIDE,
-            NONE;
+        public enum Overlap {
+            START, END, INSIDE, OUTSIDE,TOUCHING_LEFT, TOUCHING_RIGHT, NONE;
         }
 
         public Long getSize() {
@@ -108,8 +107,7 @@ public class Intervals {
             if (other.start <= this.end && this.end <= other.end) {
                 if (overlap == Overlap.START) {
                     overlap = Overlap.INSIDE;
-                }
-                else {
+                } else {
                     overlap = Overlap.END;
                 }
             }
@@ -117,6 +115,13 @@ public class Intervals {
                 overlap = Overlap.OUTSIDE;
             }
 
+            if (this.start - other.end == 1) {
+                overlap = Overlap.TOUCHING_LEFT;
+            }
+
+            if (other.start - this.end  == 1) {
+                overlap = Overlap.TOUCHING_RIGHT;
+            }
 
             return overlap;
         }
@@ -126,7 +131,9 @@ public class Intervals {
                 case START -> new Interval(other.start, this.end);
                 case END -> new Interval(this.start, other.end);
                 case INSIDE -> new Interval(other.start, other.end);
-                case OUTSIDE -> new Interval(this.start ,this.end);
+                case OUTSIDE -> new Interval(this.start, this.end);
+                case TOUCHING_LEFT -> new Interval(other.start, this.end);
+                case TOUCHING_RIGHT -> new Interval(this.start, other.end);
                 case NONE -> null;
             };
 
@@ -136,7 +143,9 @@ public class Intervals {
         public String toString() {
             return String.format("Interval(%d,%d)", start, end);
         }
-    };
+    }
+
+    ;
 
 
 }

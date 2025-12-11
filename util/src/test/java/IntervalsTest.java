@@ -15,13 +15,13 @@ class IntervalsTest {
     @Test
     public void containsTest() {
         intervals.addInterval(new Intervals.Interval(1, 10));
-        assertTrue(intervals.contains(3L) != null);
-        assertTrue(intervals.contains(1L) != null);
-        assertTrue(intervals.contains(10L) != null);
-        assertFalse(intervals.contains(0L) != null);
+        assertTrue(intervals.contains(3L) );
+        assertTrue(intervals.contains(1L) );
+        assertTrue(intervals.contains(10L));
+        assertFalse(intervals.contains(0L));
         intervals.addInterval(new Intervals.Interval(9, 12));
-        assertTrue(intervals.contains(12L) != null);
-        assertTrue(intervals.contains(1L) != null);
+        assertTrue(intervals.contains(12L) );
+        assertTrue(intervals.contains(1L));
     }
 
 
@@ -43,4 +43,13 @@ class IntervalsTest {
         intervals.addInterval(new Intervals.Interval(3, 6));
     }
 
+    @Test
+    public void testRandomIntervalAddition() {
+        for (int i = 0; i < 1000000; i++) {
+           long endPoint = (long) (Math.random() * Long.MAX_VALUE/2);
+           long startPoint = (long) (endPoint * (Math.random()/10.0));
+            intervals.addInterval(new Intervals.Interval(startPoint, endPoint));
+            assertTrue(intervals.contains((endPoint+startPoint)/2L));
+        }
+    }
 }
